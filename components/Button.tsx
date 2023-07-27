@@ -24,11 +24,11 @@ const Button = ({
 }: Props) => (
   <button
     type={type || "button"}
-    disabled={isSubmitting}
-    className={`flexCenter gap-3 px-4 py-3
-    ${textColor || "text-white"}
+    disabled={isSubmitting || false}
+    className={`flexCenter gap-3 px-4 py-3 
+        ${textColor ? textColor : "text-white"} 
         ${
-          isSubmitting ? "bg-black/50" : bgColor || "bg-primary-purple"
+          isSubmitting ? "bg-black/50" : bgColor ? bgColor : "bg-primary-purple"
         } rounded-xl text-sm font-medium max-md:w-full`}
     onClick={handleClick}
   >

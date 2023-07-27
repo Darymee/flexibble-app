@@ -3,8 +3,8 @@
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { SessionInterface } from "@/common.types";
-import { createNewProject, fetchToken } from "@/lib/actions";
+import { ProjectInterface, SessionInterface } from "@/common.types";
+import { createNewProject, fetchToken, updateProject } from "@/lib/actions";
 
 import Image from "next/image";
 import FormField from "./FormField";
@@ -15,16 +15,17 @@ import Button from "./Button";
 type Props = {
   type: string;
   session: SessionInterface;
+  project?: ProjectInterface;
 };
 
-const ProjectForm = ({ type, session }: Props) => {
+const ProjectForm = ({ type, session, project }: Props) => {
   const [form, setForm] = useState({
-    title: "",
-    description: "",
-    image: "",
-    liveSiteUrl: "",
-    githubUrl: "",
-    category: "",
+    title: project?.title || "",
+    description: project?.description || "",
+    image: project?.image || "",
+    liveSiteUrl: project?.liveSiteUrl || "",
+    githubUrl: project?.githubUrl || "",
+    category: project?.category || "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -40,7 +41,11 @@ const ProjectForm = ({ type, session }: Props) => {
     try {
       if (type === "create") {
         await createNewProject(form, session?.user?.id, token);
+        router.push("/");
+      }
 
+      if (type === "edit") {
+        await updateProject(form, project?.id as string, token);
         router.push("/");
       }
     } catch (error) {
@@ -49,6 +54,7 @@ const ProjectForm = ({ type, session }: Props) => {
       setIsSubmitting(false);
     }
   };
+
   const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 

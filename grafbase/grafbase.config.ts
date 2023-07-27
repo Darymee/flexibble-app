@@ -10,7 +10,7 @@ const User = g
     githubUrl: g.url().optional(),
     linkedinUrl: g.url().optional(),
     projects: g
-      .relation(() => Projects)
+      .relation(() => Project)
       .list()
       .optional(),
   })
@@ -19,8 +19,8 @@ const User = g
   });
 
 //@ts-ignore
-const Projects = g
-  .model("Projects", {
+const Project = g
+  .model("Project", {
     title: g.string().length({ min: 3 }),
     description: g.string(),
     image: g.url(),
