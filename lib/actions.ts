@@ -23,7 +23,7 @@ const apiKey = isProduction
   : "letmein";
 
 const serverUrl = isProduction
-  ? process.env.NEXT_PUBLIC_SERVER_URL
+  ? process.env.NEXTAUTH_URL
   : "http://localhost:3000";
 
 const client = new GraphQLClient(apiUrl);
