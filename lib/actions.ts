@@ -8,16 +8,12 @@ import {
   getProjectByIdQuery,
   getProjectsOfUserQuery,
   getUserQuery,
-  projectsQuery,
+  projectsQueryAll,
+  projectsQueryWithFilter,
 } from "@/graphql";
-
 import { ProjectForm } from "@/common.types";
 
 const isProduction = process.env.NODE_ENV === "production";
-
-console.log(process.env.NEXT_PUBLIC_SERVER_URL);
-console.log(process.env.NEXT_PUBLIC_GRAFBASE_API_URL);
-console.log(process.env.NEXT_PUBLIC_GRAFBASE_API_KEY);
 
 const apiUrl = isProduction
   ? process.env.NEXT_PUBLIC_GRAFBASE_API_URL || ""
@@ -70,7 +66,11 @@ export const fetchAllProjects = (
 ) => {
   client.setHeader("x-api-key", apiKey);
 
-  return makeGraphQLRequest(projectsQuery, { category, endcursor });
+  if (category) {
+    return makeGraphQLRequest(projectsQueryWithFilter, { category, endcursor });
+  }
+
+  return makeGraphQLRequest(projectsQueryAll, { endcursor });
 };
 
 export const createNewProject = async (
