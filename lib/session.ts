@@ -1,4 +1,4 @@
-import { getServerSession, Session } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import { NextAuthOptions, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
@@ -48,11 +48,14 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      if (token?.exp && Date.now() > token.exp * 1000) {
-        // Токен истек, можно обработать здесь, например, перенаправить на страницу входа
-        console.error("Token expired, redirecting to login");
-        return null; // Возвращаем null, чтобы сессия была удалена
-      }
+if (
+  token &&
+  token.exp &&
+  typeof token.exp === "number" &&
+  Date.now() > token.exp * 1000
+) {
+  console.error("Token expired, redirecting to login");
+}
 
       const email = session?.user?.email as string;
 
