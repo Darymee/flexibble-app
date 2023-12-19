@@ -17,21 +17,29 @@ export const authOptions: NextAuthOptions = {
   ],
   jwt: {
     encode: ({ secret, token }) => {
-      const encodedToken = jsonwebtoken.sign(
-        {
-          ...token,
-          iss: "grafbase",
-          exp: Math.floor(Date.now() / 1000) + 60 * 60,
-        },
-        secret
-      );
-
-      return encodedToken;
+      try {
+        const encodedToken = jsonwebtoken.sign(
+          {
+            ...token,
+            iss: "grafbase",
+            exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 час
+          },
+          secret
+        );
+        return encodedToken;
+      } catch (error) {
+        console.error("Error encoding token", error);
+        throw error;
+      }
     },
     decode: async ({ secret, token }) => {
-      const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
-
-      return decodedToken;
+      try {
+        const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
+        return decodedToken;
+      } catch (error) {
+        console.error("Error decoding token", error);
+        throw error;
+      }
     },
   },
   theme: {
@@ -55,7 +63,7 @@ export const authOptions: NextAuthOptions = {
 
         return newSession;
       } catch (error) {
-        console.log("Error retrieving user data", error);
+        console.error("Error retrieving user data", error);
         return session;
       }
     },
@@ -74,8 +82,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         return true;
-      } catch (error: any) {
-        console.log(error);
+      } catch (error) {
+        console.error("Error during sign-in", error);
         return false;
       }
     },
@@ -83,7 +91,11 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getCurrentUser() {
-  const session = (await getServerSession(authOptions)) as SessionInterface;
-
-  return session;
+  try {
+    const session = (await getServerSession(authOptions)) as SessionInterface;
+    return session;
+  } catch (error) {
+    console.error("Error getting current user", error);
+    throw error;
+  }
 }
